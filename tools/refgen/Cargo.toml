@@ -1,0 +1,17 @@
+# Generates test/refdata.jsonl: the results of the original similar 2.7.0
+# (with the `unicode` feature, like gpui-kit) on generated inputs, to
+# validate the Haxe port against it.
+#
+# Usage (from this folder): cargo run --offline --release > ../../test/refdata.jsonl
+
+[package]
+name = "similar-refgen"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+similar = { version = "=2.7.0", features = ["unicode"] }
+unicode-segmentation = "=1.13.3"
+
+[workspace]

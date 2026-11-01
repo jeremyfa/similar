@@ -1,0 +1,14 @@
+{
+    "name": "similar",
+    "url": "https://github.com/mitsuhiko/similar",
+    "license": "Apache",
+    "tags": ["diff", "text", "myers", "patience", "lcs", "cross"],
+    "description": "Pure Haxe port of similar 2.7.0: diffing algorithms (Myers, patience, LCS), text diffs and unified diffs.",
+    "version": "0.1.0",
+    "classPath": "src",
+    "releasenote": "Initial port of similar 2.7.0 with the unicode feature.",
+    "contributors": ["jeremyfa"],
+    "dependencies": {
+        "unicode-segmentation": ""
+    }
+}
