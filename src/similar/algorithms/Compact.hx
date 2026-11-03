@@ -28,7 +28,8 @@ class Compact extends DiffHookBase {
     var eq:SeqEq;
 
     /** Creates a new compact hook wrapping another hook. */
-    public function new<T>(d:DiffHook, old:Lookup<T>, newSeq:Lookup<T>) {
+    // Not generic: C# has no generic constructors (Haxe's C# output does not compile)
+    public function new(d:DiffHook, old:Lookup<Dynamic>, newSeq:Lookup<Dynamic>) {
         super();
         this.d = d;
         this.eq = (n, o) -> newSeq[n] == old[o];
