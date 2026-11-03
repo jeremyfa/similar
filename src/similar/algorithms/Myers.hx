@@ -6,6 +6,7 @@ package similar.algorithms;
 
 import similar.Lookup;
 import similar.Range;
+import similar.algorithms.AlgorithmUtils.LookupSeqEq;
 import similar.algorithms.AlgorithmUtils.SeqEq;
 import similar.algorithms.AlgorithmUtils.commonPrefixLenBy;
 import similar.algorithms.AlgorithmUtils.commonSuffixLenBy;
@@ -35,7 +36,7 @@ class Myers {
      * execution time permitted before it bails and falls back to an approximation.
      */
     public static function diffDeadline<T>(d:DiffHook, old:Lookup<T>, oldRange:Range, newSeq:Lookup<T>, newRange:Range, deadline:Null<Float>):Void {
-        diffDeadlineBy(d, (n, o) -> newSeq[n] == old[o], oldRange, newRange, deadline);
+        diffDeadlineBy(d, new LookupSeqEq(old, newSeq), oldRange, newRange, deadline);
     }
 
     /** `diffDeadline` with a comparison function instead of the lookups. */

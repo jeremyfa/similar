@@ -7,6 +7,7 @@ package similar.algorithms;
 import haxe.ds.IntMap;
 import similar.Lookup;
 import similar.Range;
+import similar.algorithms.AlgorithmUtils.LookupSeqEq;
 import similar.algorithms.AlgorithmUtils.SeqEq;
 import similar.algorithms.AlgorithmUtils.commonPrefixLenBy;
 import similar.algorithms.AlgorithmUtils.commonSuffixLenBy;
@@ -32,7 +33,7 @@ class Lcs {
      * execution time permitted before it bails and falls back to an approximation.
      */
     public static function diffDeadline<T>(d:DiffHook, old:Lookup<T>, oldRange:Range, newSeq:Lookup<T>, newRange:Range, deadline:Null<Float>):Void {
-        diffDeadlineBy(d, (n, o) -> newSeq[n] == old[o], oldRange, newRange, deadline);
+        diffDeadlineBy(d, new LookupSeqEq(old, newSeq), oldRange, newRange, deadline);
     }
 
     /** `diffDeadline` with a comparison function instead of the lookups. */
@@ -75,7 +76,7 @@ class Lcs {
                 var oldOrigIdx = oldRange.start + commonPrefixLen + oldIdx;
                 var newOrigIdx = newRange.start + commonPrefixLen + newIdx;
 
-                if (eq(newOrigIdx, oldOrigIdx)) {
+                if (eq.eq(newOrigIdx, oldOrigIdx)) {
                     d.equal(oldOrigIdx, newOrigIdx, 1);
                     oldIdx += 1;
                     newIdx += 1;
@@ -128,7 +129,7 @@ class Lcs {
 
             var j = oldLen - 1;
             while (j >= 0) {
-                var val = if (eq(i, j)) {
+                var val = if (eq.eq(i, j)) {
                     table.get(i + 1, j + 1) + 1;
                 }
                 else {

@@ -8,6 +8,7 @@ import similar.DiffOp;
 import similar.DiffTag;
 import similar.Lookup;
 import similar.Range;
+import similar.algorithms.AlgorithmUtils.LookupSeqEq;
 import similar.algorithms.AlgorithmUtils.SeqEq;
 import similar.algorithms.AlgorithmUtils.commonPrefixLenBy;
 import similar.algorithms.AlgorithmUtils.commonSuffixLenBy;
@@ -32,7 +33,7 @@ class Compact extends DiffHookBase {
     public function new(d:DiffHook, old:Lookup<Dynamic>, newSeq:Lookup<Dynamic>) {
         super();
         this.d = d;
-        this.eq = (n, o) -> newSeq[n] == old[o];
+        this.eq = new LookupSeqEq(old, newSeq);
     }
 
     /** Creates a compact hook comparing with `eq` instead of lookups. */
@@ -76,7 +77,7 @@ class Compact extends DiffHookBase {
      * if they run into similar edits which can be merged.
      */
     public static function cleanupDiffOps<T>(old:Lookup<T>, newSeq:Lookup<T>, ops:Array<DiffOp>):Void {
-        cleanupDiffOpsBy((n, o) -> newSeq[n] == old[o], ops);
+        cleanupDiffOpsBy(new LookupSeqEq(old, newSeq), ops);
     }
 
     /** `cleanupDiffOps` with a comparison function. */

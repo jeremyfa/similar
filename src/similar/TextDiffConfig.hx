@@ -4,6 +4,9 @@
 
 package similar;
 
+import similar.algorithms.AlgorithmUtils.IntArraySeqEq;
+import similar.algorithms.AlgorithmUtils.SeqEq;
+import similar.algorithms.AlgorithmUtils.StringArraySeqEq;
 import similar.algorithms.DeadlineSupport;
 import similar.algorithms.IdentifyDistinct;
 
@@ -104,12 +107,42 @@ class TextDiffConfig {
         var deadline = deadlineAbsolute != null ? deadlineAbsolute : (deadlineRelative != null ? DeadlineSupport.durationToDeadline(deadlineRelative) : null);
         var ops = if (old.length > 100 || newSlices.length > 100) {
             var ih = new IdentifyDistinct(old, new Range(0, old.length), newSlices, new Range(0, newSlices.length));
-            Similar.captureDiffDeadline(alg, ih.oldLookup(), ih.oldRange(), ih.newLookup(), ih.newRange(), deadline);
+            if (alg == Algorithm.Patience) {
+                Similar.captureDiffDeadline(alg, ih.oldLookup(), ih.oldRange(), ih.newLookup(), ih.newRange(), deadline);
+            }
+            else {
+                // Same comparison as the lookups (both ranges start at 0), on the
+                // typed id arrays: no id boxed per comparison
+                final eq = new IntArraySeqEq(@:privateAccess ih.oldVec, @:privateAccess ih.newVec);
+                captureDiffBy(alg, eq, ih.oldRange(), ih.newRange(), deadline);
+            }
         }
-        else {
+        else if (alg == Algorithm.Patience) {
             Similar.captureDiffDeadline(alg, old, new Range(0, old.length), newSlices, new Range(0, newSlices.length), deadline);
         }
+        else {
+            // Same comparison as the lookups, on the typed string arrays: no
+            // string boxed per comparison
+            captureDiffBy(alg, new StringArraySeqEq(old, newSlices), new Range(0, old.length), new Range(0, newSlices.length), deadline);
+        }
         return @:privateAccess new TextDiff(old, newSlices, ops, nlTerminated != null ? nlTerminated : newlineTerminated, alg);
+    }
+
+    /**
+     * `Similar.captureDiffDeadline` with a typed comparison instead of the
+     * lookups, for the algorithms that take one (Myers and LCS). Haxe
+     * specific: the lookups go through untyped function values, which box
+     * every value they return on hxcpp (and C#).
+     */
+    static function captureDiffBy(alg:Algorithm, eq:SeqEq, oldRange:Range, newRange:Range,
+            deadline:Null<Float>):Array<DiffOp> {
+        var capture = new similar.algorithms.Capture();
+        var d = similar.algorithms.Compact.withEq(new similar.algorithms.Replace(capture), eq);
+        if (alg == Algorithm.Lcs)
+            similar.algorithms.Lcs.diffDeadlineBy(d, eq, oldRange, newRange, deadline);
+        else
+            similar.algorithms.Myers.diffDeadlineBy(d, eq, oldRange, newRange, deadline);
+        return capture.intoOps();
     }
 
 }
