@@ -13,9 +13,9 @@ package similar;
  * and other values are compared with `==` (see `similar.algorithms.ValueMap`).
  */
 @:callable
-abstract Lookup<T>(Int->T) from Int->T to Int->T {
+abstract Lookup<T>((Int) -> T) from (Int) -> T to (Int) -> T {
 
-    public inline function new(get:Int->T) {
+    public inline function new(get:(Int) -> T) {
         this = get;
     }
 
