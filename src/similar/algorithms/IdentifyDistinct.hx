@@ -23,8 +23,7 @@ class IdentifyDistinct {
     var newVec:Array<Int>;
 
     /** Creates an int hasher for two sequences. */
-    // Not generic: C# has no generic constructors (Haxe's C# output does not compile)
-    public function new(old:Lookup<Dynamic>, oldRange:Range, newSeq:Lookup<Dynamic>, newRange:Range) {
+    public function new<T>(old:Lookup<T>, oldRange:Range, newSeq:Lookup<T>, newRange:Range) {
         var map = new ValueMap<Int>();
         var oldSeq = [];
         var newSeqIds = [];
